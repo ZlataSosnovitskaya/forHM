@@ -43,20 +43,19 @@ class Rocket(Body):
         self.v=v
         self.dm=dm
         super().__init__(0,0, 15, 20) # Свойства тела переносятся на ракету
-        self.alfa=math.atan(self.vy/self.vx) # Рассчитаем начальный угол полёта
         self.a=v*dm/(DT*(M+m)) #Расчитаем ускорение, создаваемое реактивной силой
         self.dm=dm
 
     def advance(self):
         super().advance()
         while self.m>0:
-            self.x+=self.a*math.cos(self.alfa)*(DT**2)/2
-            self.y+=self.a*math.sin(self.alfa)*(DT**2)/2
+            self.x+=self.a*self.vx/math.sqrt(self.vx**2+self.vy**2)*(DT**2)/2
+            self.y+=self.a*self.vy/math.sqrt(self.vx**2+self.vy**2)*(DT**2)/2
 
             self.m-=self.dm
 
-            self.vx+=self.a*math.cos(self.alfa)*DT
-            self.vy+=self.a*math.sin(self.alfa)*DT
+            self.vx+=self.a*self.vx/math.sqrt(self.vx**2+self.vy**2)*DT
+            self.vy+=self.a*self.vy/math.sqrt(self.vx**2+self.vy**2)*DT
 
 
 import numpy as np
