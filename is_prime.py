@@ -14,8 +14,7 @@ def is_prime(num):
             answer = False
             break
         b += 1
-    return answer  # Точная проверка на простоту
-    # Менять до сюда =) ---- ^^^^^ ----
+    return answer
 
 print(is_prime(4))  #False, число 4 - составное
 print(primefactors(4))
@@ -35,8 +34,6 @@ class PrimeCheckTest(unittest.TestCase):
         Точная проверка того, простое ли (True) или составное (False) число
         """
         return len(primefactors(num)) <=1
-
-
 
     def test_return_type(self):
         """Проверка того, что функция возвращает bool"""
@@ -89,11 +86,5 @@ class PrimeCheckTest(unittest.TestCase):
                 msg=f"Функция наврала на {r}"
             )
 
-# Должно выдать:
-# --------------
-# Ran ... tests in ...s
-# OK
-
-# Запуск тестов
 if __name__ == '__main__':
     unittest.main()
