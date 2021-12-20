@@ -3,23 +3,22 @@
 """
 
 import unittest
-from sympy.ntheory import primefactors
+from sympy.ntheory import primetest
+from sympy.ntheory import primetest,factorint
 import math
 
 def is_prime(num):
     answer = True
     b = 2
-    while b <= round(math.sqrt(num)):
-        if num % (b) == 0:
-            answer = False
-            break
-        b += 1
+    if num >= 2:
+        while b <= round(math.sqrt(num)):
+            if num % (b) == 0:
+                answer = False
+                break
+            b += 1
+    else:
+        answer = False
     return answer
-
-print(is_prime(4))  #False, число 4 - составное
-print(primefactors(4))
-print(len(primefactors(4))<=1)  # True --- так как у 4 - один делитель
-
 
 class PrimeCheckTest(unittest.TestCase):
     """Тесты для функции проверки на простоту"""
@@ -29,26 +28,37 @@ class PrimeCheckTest(unittest.TestCase):
         pass
 
     @staticmethod
-    def is_exatly_prime(num):
+    def is_exatly_prime_64(num):
         """
-        Точная проверка того, простое ли (True) или составное (False) число
+        Точная проверка того, простое ли (True) или составное (False) число,
+        работает только в диапазоне [0, 2*64)
         """
-        return len(primefactors(num)) <=1
+        if num >= 2 ** 64:
+            raise ValueError("Эта функция работает только в диапазоне [0, 2*64)")
+        return primetest.isprime(num)
 
     def test_return_type(self):
         """Проверка того, что функция возвращает bool"""
-        for i in range(10):
+        for i in range(-5, 10):
             self.assertIsInstance(
                 is_prime(i), bool,
                 msg="Функция должна возвращать bool"
             )
 
-    def test_first_1000(self):
-        """Проверка 0..999"""
+    def test_nonned_1000(self):
+        """Проверка [0..999)"""
         for i in range(1000):
             self.assertEqual(
-                is_prime(i), PrimeCheckTest.is_exatly_prime(i),
-                msg=f"Функция наврала на {i}"
+                is_prime(i), PrimeCheckTest.is_exatly_prime_64(i),
+                msg=f"Функция наврала на небольшом положительном {i}"
+            )
+
+    def test_negatives_10(self):
+        """Проверка [-10, 0)"""
+        for i in range(-10, 0):
+            self.assertEqual(
+                is_prime(i), PrimeCheckTest.is_exatly_prime_64(i),
+                msg=f"Функция наврала на отрицательном {i}"
             )
 
     def test_carmichael(self):
@@ -73,19 +83,20 @@ class PrimeCheckTest(unittest.TestCase):
         """
         Проверка на тривиальных псевдослучайных
         Генерация линейным конгруэнтным генератором
-        https://en.wikipedia.org/wiki/Linear_congruential_generator#Parameters_in_common_use 
+        https://en.wikipedia.org/wiki/Linear_congruential_generator#Parameters_in_common_use
+        в память о ZX81
         """
-        a = 6364136223846793005
+        a = 75
         s = 1
-        c = 1
-        for _ in range(1000):
-            s = (s * a + c) % (1 << 64)
-            r = s >> 32  # старшие 32 бита
+        c = 74
+        m = 1 << 16 + 1
+        for _ in range(50):
+            s = (s * a + c) % m
+            r = s % ( 1 << 16 )  # 16 бит
             self.assertEqual(
-                is_prime(r), PrimeCheckTest.is_exatly_prime(r),
+                is_prime(r), PrimeCheckTest.is_exatly_prime_64(r),
                 msg=f"Функция наврала на {r}"
             )
 
 if __name__ == '__main__':
     unittest.main()
-    
