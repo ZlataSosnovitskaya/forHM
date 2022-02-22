@@ -1,5 +1,6 @@
 import numpy as np
 from numpy import newaxis
+from numpy import array
 from numpy.linalg import solve as solve_out_of_the_box
 from numpy.linalg import norm, det
 from numpy.random import uniform
