@@ -13,7 +13,7 @@ class PolynomialTypeError(TypeError):
 class Polynomial:
     """Многочлен над полем (пока числовым, а там видно будет)"""
 
-    def __init__(self, arg=0):
+    def __init__(self, arg=0)->list:
         """
         coefficients -- коэффициенты
         """
@@ -29,7 +29,7 @@ class Polynomial:
         self.cleanup(self.coefficients)
 
     @staticmethod
-    def cleanup(coefficients):
+    def cleanup(coefficients) -> list:
         """
         Удаление старших коэффициентов, если они близки к 0, для понижения степени
         """
@@ -37,7 +37,7 @@ class Polynomial:
         while len(coefficients) and abs(coefficients[-1]) < epsilon:
             del coefficients[-1]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (" + ".join([
             str(c) + ("*x^" + str(i) if i > 0 else "")
             for c, i in reversed(list(zip(self.coefficients, itertools.count())))
@@ -53,10 +53,10 @@ class Polynomial:
         else:
             raise PolynomialDomainError("Can't say if Polynomial is equal to " + str(type(other)))
 
-    def __lshift__(self, deg):
+    def __lshift__(self, deg) ->list:
         return Polynomial(([0] * deg) + self.coefficients)
 
-    def __add__(self, other):
+    def __add__(self, other) ->list:
         if isinstance(other, Number):
             other = Polynomial(other)
 
@@ -71,22 +71,22 @@ class Polynomial:
             sce + oce for sce, oce in zip(sc, oc)
         ])
 
-    def __radd__(self, other):
+    def __radd__(self, other) ->list:
         return self.__add__(other)  # Коммутативность
 
-    def __neg__(self):
+    def __neg__(self) ->list:
         return Polynomial([-c for c in self.coefficients])
 
-    def __sub__(self, other):
+    def __sub__(self, other)->list:
         if isinstance(other, Number):
             other = Polynomial(other)
 
         return self.__add__(other.__neg__())
 
-    def __rsub__(self, other):
+    def __rsub__(self, other) ->list:
         return self.__neg__().__add__(other)
 
-    def __mul__(self, other):
+    def __mul__(self, other) ->list:
         if isinstance(other, Number):
             other = Polynomial(other)
 
@@ -97,10 +97,10 @@ class Polynomial:
 
         return Polynomial(c)
 
-    def __rmul__(self, other):
+    def __rmul__(self, other)->list:
         return self.__mul__(other)  # Коммутативность
 
-    def __divmod__(self, other):
+    def __divmod__(self, other)->list:
         if isinstance(other, Number):
             other = Polynomial(other)
 
@@ -114,22 +114,22 @@ class Polynomial:
             d.append(c)
         return Polynomial(list(reversed(d))), sc
 
-    def __floordiv__(self, other):
+    def __floordiv__(self, other)->list:
         return divmod(self, other)[0]
 
-    def __mod__(self, other):
+    def __mod__(self, other)->list:
         return divmod(self, other)[1]
 
-    def __rfloordiv__(self, other):
+    def __rfloordiv__(self, other)->list:
         return divmod(other, self)[0]
 
-    def __rmod__(self, other):
+    def __rmod__(self, other)->list:
         return divmod(other, self)[1]
 
-    def __rdivmod__(self, other):
+    def __rdivmod__(self, other)->list:
         return Polynomial(other).__divmod__(self)
 
-    def __complex__(self):
+    def __complex__(self)->list:
         """Преобразование к комплексному числу, complex(...)"""
         if not len(self.coefficients):
             return 0j
@@ -138,7 +138,7 @@ class Polynomial:
         else:
             raise PolynomialDomainError("Can't consider higher degree polynomial as a complex")
 
-    def __float__(self):
+    def __float__(self)->list:
         """Преобразование к комплексному числу, complex(...)"""
         if not len(self.coefficients):
             return 0.0
